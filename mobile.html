@@ -1,74 +1,144 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-TW">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body { font-family: sans-serif; overflow: hidden; background: #000; color: #fff; }
-    
-     }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>即時留言板</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
 
-    /* 跑馬燈動畫 */
-    .marquee-text {
-      display: inline-block;
-      padding-left: 100%;
-      animation: marquee 20s linear infinite;
-    }
+        .container {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
 
-    @keyframes marquee {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-100%); }
-    }
+        h2 {
+            margin-bottom: 20px;
+            color: #00d4ff;
+        }
 
-    /* 留言輸入框 */
-    .input-area {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(255,255,255,0.1);
-      padding: 20px;
-      border-radius: 10px;
-    }
-  </style>
+        /* 輸入框樣式 */
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #333;
+            border-radius: 12px;
+            background-color: #1e1e1e;
+            color: white;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #00d4ff;
+        }
+
+        /* 送出按鈕樣式 */
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: #00d4ff;
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.3s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+            background-color: #00b8e6;
+        }
+
+        #status {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        .success { color: #4caf50 !important; }
+        .error { color: #f44336 !important; }
+    </style>
 </head>
 <body>
 
-  <div class="marquee-container">
-    <div class="marquee-text" id="displayBoard">載入留言中...</div>
-  </div>
+    <div class="container">
+        <h2>💡 傳送你的留言</h2>
+        <input type="text" id="msgInput" placeholder="想說什麼？" maxlength="50">
+        <button onclick="sendMessage()" id="sendBtn">送出留言</button>
+        <p id="status"></p>
+    </div>
 
-  <div class="input-area">
-    <input type="text" id="msgInput" placeholder="輸入你想說的話...">
-    <button onclick="sendMessage()">送出留言</button>
-  </div>
+    <script>
+        // 請確保這格網址與 index.html 中使用的一致
+        const API_URL = "你的Google_Apps_Script網址";
 
-  <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwbplzkLckWDgruWxAt6RMNu5WBI2k36457bIxgk3iwyI8AGU5MI6qHMh6vb9Vs2nnS/exec";
+        async function sendMessage() {
+            const input = document.getElementById('msgInput');
+            const btn = document.getElementById('sendBtn');
+            const status = document.getElementById('status');
+            const msg = input.value.trim();
 
-    // 取得留言並更新跑馬燈
-    async function updateMarquee() {
-      const res = await fetch(API_URL);
-      const messages = await res.json();
-      document.getElementById('displayBoard').innerText = messages.join(" ｜ ");
-    }
+            if (!msg) {
+                status.innerText = "請先輸入內容喔！";
+                status.className = "error";
+                return;
+            }
 
-    // 發送新留言
-    async function sendMessage() {
-      const msg = document.getElementById('msgInput').value;
-      if(!msg) return;
-      
-      await fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({ message: msg })
-      });
-      
-      document.getElementById('msgInput').value = '';
-      updateMarquee(); // 立即更新
-    }
+            // 鎖定按鈕防止重複點擊
+            btn.disabled = true;
+            btn.innerText = "傳送中...";
+            status.innerText = "";
 
-    // 每 10 秒自動抓取新留言
-    setInterval(updateMarquee, 10000);
-    updateMarquee();
-  </script>
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ message: msg })
+                });
+
+                if (response.ok) {
+                    status.innerText = "傳送成功！字幕即將出現";
+                    status.className = "success";
+                    input.value = ""; // 清空輸入框
+                } else {
+                    throw new Error();
+                }
+            } catch (error) {
+                status.innerText = "傳送失敗，請稍後再試";
+                status.className = "error";
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "送出留言";
+                
+                // 3秒後自動清除狀態文字
+                setTimeout(() => { status.innerText = ""; }, 3000);
+            }
+        }
+
+        // 支援按下手機鍵盤的「換行/送出」鍵直接發送
+        document.getElementById('msgInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
 </body>
 </html>

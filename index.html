@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大螢幕留言牆</title>
+    <title>可愛風留言牆</title>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
     <style>
         body { 
             background-color: #000; 
@@ -11,42 +12,59 @@
             margin: 0;
             padding: 0;
             overflow: hidden; 
-            font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
+            /* 設定優先使用圓潤的字型 */
+            font-family: 'ZCOOL KuaiLe', "Yu Gothic", "Meiryo", "微軟正黑體", sans-serif;
         }
 
         .marquee-container {
             position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 5%;
-            right: 5%;
+            top: 0; bottom: 0; left: 5%; right: 5%;
             overflow: hidden; 
         }
 
         .marquee-content {
             display: flex;
             flex-direction: column; 
-            gap: 25px;             
+            gap: 30px;             
             position: absolute;
             width: 100%;
             animation: scrollUp 40s linear infinite; 
         }
 
+        /* 留言氣泡：加入更多圓角與可愛陰影 */
         .message-item {
-            font-size: 42px;       
+            font-size: 48px; /* 稍微放大增加可愛感 */
             font-weight: bold;
             line-height: 1.4;
-            padding: 30px 45px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
-            border-left: 10px solid #00d4ff; 
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 35px 50px;
+            border-radius: 50px; /* 超大圓角讓它看起來像雲朵 */
+            box-shadow: 0 15px 35px rgba(255, 255, 255, 0.1);
             word-wrap: break-word; 
-            white-space: normal;   
+            white-space: normal;
+            border: 4px solid transparent; /* 增加邊框質感 */
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3); /* 文字陰影 */
         }
 
-        .message-item:nth-child(odd) {
-            border-left-color: #ff007a; 
+        /* 顏色循環：使用粉嫩系色彩 */
+        .message-item:nth-child(4n+1) {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: #333; /* 粉嫩背景配深色字更清楚 */
+            border-color: #ffc1cc;
+        }
+        .message-item:nth-child(4n+2) {
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            color: #333;
+            border-color: #d1e5ff;
+        }
+        .message-item:nth-child(4n+3) {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            color: #333;
+            border-color: #b2f9d1;
+        }
+        .message-item:nth-child(4n) {
+            background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%);
+            color: #333;
+            border-color: #fce1c1;
         }
 
         @keyframes scrollUp {
@@ -59,40 +77,32 @@
 
     <div class="marquee-container">
         <div class="marquee-content" id="displayBoard">
-            載入留言中...
+            🌈 正在準備可愛的留言中...
         </div>
     </div>
 
     <script>
-        // 1. 你的 API 網址
         const API_URL = "https://script.google.com/macros/s/AKfycbwbplzkLckWDgruWxAt6RMNu5WBI2k36457bIxgk3iwyI8AGU5MI6qHMh6vb9Vs2nnS/exec";
 
-        // 2. 取得留言並更新畫面的函式
         async function updateMarquee() {
             try {
-                // 加入時間標記 ?t=... 確保 Google 回傳最新資料，不被瀏覽器快取
                 const res = await fetch(API_URL + "?t=" + new Date().getTime());
                 const messages = await res.json();
-                
                 const displayBoard = document.getElementById('displayBoard');
                 
                 if (messages && messages.length > 0) {
-                    // innerHTML 會清空舊內容，只填入後端給的最新 20 筆
                     displayBoard.innerHTML = messages.map(msg => `
-                        <div class="message-item">${msg}</div>
+                        <div class="message-item">✨ ${msg}</div>
                     `).join('');
                 } else {
-                    displayBoard.innerHTML = '<div class="message-item">目前尚無留言</div>';
+                    displayBoard.innerHTML = '<div class="message-item">快來留言呀！( •̀ ω •́ )✧</div>';
                 }
             } catch (error) {
                 console.error("更新失敗:", error);
             }
         }
 
-        // 3. 每 15 秒檢查一次新留言
         setInterval(updateMarquee, 15000);
-
-        // 4. 初次載入
         updateMarquee();
     </script>
 </body>

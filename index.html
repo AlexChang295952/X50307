@@ -76,24 +76,22 @@
 
         // 2. 取得留言並更新畫面的函式
         async function updateMarquee() {
-            try {
-                const res = await fetch(API_URL);
-                const messages = await res.json();
-                
-                const displayBoard = document.getElementById('displayBoard');
-                
-                if (messages.length > 0) {
-                    // 將每一則留言包裝成 .message-item 標籤
-                    displayBoard.innerHTML = messages.map(msg => `
-                        <div class="message-item">${msg}</div>
-                    `).join('');
-                } else {
-                    displayBoard.innerHTML = '<div class="message-item">目前尚無留言，歡迎掃碼參與！</div>';
-                }
-            } catch (error) {
-                console.error("抓取資料失敗:", error);
+      try {
+          const res = await fetch(API_URL);
+          const messages = await res.json(); // 這裡拿到的應該就是後端過濾後的 20 筆
+        
+          const displayBoard = document.getElementById('displayBoard');
+        
+         // 關鍵：將拿到的 20 筆資料重新轉為 HTML
+         if (messages && messages.length > 0) {
+            displayBoard.innerHTML = messages.map(msg => `
+                <div class="message-item">${msg}</div>
+            `).join('');
             }
-        }
+           } catch (error) {
+        console.error("更新失敗:", error);
+       }  
+   }
 
         // 3. 設定每 15 秒自動從雲端重新抓取一次最新留言
         setInterval(updateMarquee, 15000);
@@ -103,5 +101,6 @@
     </script>
 </body>
 </html>
+
 
 

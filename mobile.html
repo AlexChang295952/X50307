@@ -1,44 +1,53 @@
-async function sendMessage() {
-    const input = document.getElementById('msgInput');
-    const btn = document.getElementById('sendBtn');
-    const status = document.getElementById('status');
-    const msg = input.value.trim();
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>即時留言板</title>
+    <style>
+        /* 這裡放您之前的 CSS 樣式... */
+        body { background-color: #121212; color: #fff; text-align: center; padding: 20px; }
+        input { width: 90%; padding: 15px; margin-bottom: 15px; border-radius: 8px; }
+        button { width: 90%; padding: 15px; background-color: #00d4ff; border-radius: 8px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>💡 傳送你的留言</h2>
+        <input type="text" id="msgInput" placeholder="想說什麼？" maxlength="50">
+        <button onclick="sendMessage()" id="sendBtn">送出留言</button>
+        <p id="status"></p>
+    </div>
 
-    if (!msg) {
-        status.innerText = "請先輸入內容喔！";
-        status.className = "error";
-        return;
-    }
+    <script>
+        // 確保這行在 <script> 標籤內
+        const API_URL = "https://script.google.com/macros/s/AKfycbwbplzkLckWDgruWxAt6RMNu5WBI2k36457bIxgk3iwyI8AGU5MI6qHMh6vb9Vs2nnS/exec";
 
-    btn.disabled = true;
-    btn.innerText = "傳送中...";
-    status.innerText = "";
+        async function sendMessage() {
+            const input = document.getElementById('msgInput');
+            const btn = document.getElementById('sendBtn');
+            const status = document.getElementById('status');
+            const msg = input.value.trim();
+            if (!msg) { status.innerText = "請輸入內容"; return; }
 
-    try {
-        // 使用 Google Apps Script 時，有時會因為 Redirect 導致 response.ok 為 false
-        // 但資料其實已經寫入成功。
-        await fetch(API_URL, {
-            method: 'POST',
-            mode: 'no-cors', // 關鍵：避免跨網域預檢(Preflight)問題
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ message: msg })
-        });
+            btn.disabled = true;
+            btn.innerText = "傳送中...";
 
-        // 由於 no-cors 模式下無法讀取 response 內容，
-        // 我們假設只要沒進入 catch 就是成功。
-        status.innerText = "傳送成功！字幕即將出現";
-        status.className = "success";
-        input.value = ""; 
-
-    } catch (error) {
-        console.error("Send Error:", error);
-        status.innerText = "傳送失敗，請檢查網路連線";
-        status.className = "error";
-    } finally {
-        btn.disabled = false;
-        btn.innerText = "送出留言";
-        setTimeout(() => { status.innerText = ""; }, 3000);
-    }
-}
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({ message: msg })
+                });
+                status.innerText = "傳送成功！";
+                input.value = "";
+            } catch (error) {
+                status.innerText = "傳送失敗";
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "送出留言";
+            }
+        }
+    </script>
+</body>
+</html>

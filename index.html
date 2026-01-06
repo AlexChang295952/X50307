@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>大螢幕留言牆</title>
     <style>
-        /* 基礎設定：全黑背景與字體 */
         body { 
             background-color: #000; 
             color: #ffffff; 
@@ -15,7 +14,6 @@
             font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
         }
 
-        /* 跑馬燈外框：固定在螢幕中心區域 */
         .marquee-container {
             position: fixed;
             top: 0;
@@ -25,18 +23,15 @@
             overflow: hidden; 
         }
 
-        /* 滾動內容容器 */
         .marquee-content {
             display: flex;
             flex-direction: column; 
             gap: 25px;             
             position: absolute;
             width: 100%;
-            /* 30秒走完一輪，留言多時可調大數值 */
             animation: scrollUp 40s linear infinite; 
         }
 
-        /* 單個留言氣泡樣式 */
         .message-item {
             font-size: 42px;       
             font-weight: bold;
@@ -50,12 +45,10 @@
             white-space: normal;   
         }
 
-        /* 奇數留言換色，增加層次感 */
         .message-item:nth-child(odd) {
             border-left-color: #ff007a; 
         }
 
-        /* 向上滾動動畫 */
         @keyframes scrollUp {
             0% { transform: translateY(100vh); }   
             100% { transform: translateY(-100%); } 
@@ -71,38 +64,36 @@
     </div>
 
     <script>
-        // 1. 請在此處替換成你的 Google Apps Script 網址
+        // 1. 你的 API 網址
         const API_URL = "https://script.google.com/macros/s/AKfycbwbplzkLckWDgruWxAt6RMNu5WBI2k36457bIxgk3iwyI8AGU5MI6qHMh6vb9Vs2nnS/exec";
-        // 在 API_URL 後面加上時間戳記，防止瀏覽器快取舊資料
-        const res = await fetch(API_URL + "?t=" + new Date().getTime());
+
         // 2. 取得留言並更新畫面的函式
         async function updateMarquee() {
-      try {
-          const res = await fetch(API_URL);
-          const messages = await res.json(); // 這裡拿到的應該就是後端過濾後的 20 筆
-        
-          const displayBoard = document.getElementById('displayBoard');
-        
-         // 關鍵：將拿到的 20 筆資料重新轉為 HTML
-         if (messages && messages.length > 0) {
-            displayBoard.innerHTML = messages.map(msg => `
-                <div class="message-item">${msg}</div>
-            `).join('');
+            try {
+                // 加入時間標記 ?t=... 確保 Google 回傳最新資料，不被瀏覽器快取
+                const res = await fetch(API_URL + "?t=" + new Date().getTime());
+                const messages = await res.json();
+                
+                const displayBoard = document.getElementById('displayBoard');
+                
+                if (messages && messages.length > 0) {
+                    // innerHTML 會清空舊內容，只填入後端給的最新 20 筆
+                    displayBoard.innerHTML = messages.map(msg => `
+                        <div class="message-item">${msg}</div>
+                    `).join('');
+                } else {
+                    displayBoard.innerHTML = '<div class="message-item">目前尚無留言</div>';
+                }
+            } catch (error) {
+                console.error("更新失敗:", error);
             }
-           } catch (error) {
-        console.error("更新失敗:", error);
-       }  
-   }
+        }
 
-        // 3. 設定每 15 秒自動從雲端重新抓取一次最新留言
+        // 3. 每 15 秒檢查一次新留言
         setInterval(updateMarquee, 15000);
 
-        // 4. 網頁開啟時先執行一次
+        // 4. 初次載入
         updateMarquee();
     </script>
 </body>
 </html>
-
-
-
-

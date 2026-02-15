@@ -3,77 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>鋼筆手寫風留言牆</title>
-    <link href="https://fonts.googleapis.com/css2?family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+    <title>現代簡潔留言牆</title>
     <style>
         body { 
             background-color: transparent; 
             margin: 0;
             padding: 0;
             overflow: hidden; 
-            /* 套用鋼筆手寫字型 */
-            font-family: 'Zhi Mang Xing', cursive, "微軟正黑體", sans-serif;
+            /* 指定微軟正黑體，並設定後備字型 */
+            font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
         .marquee-container {
             position: fixed;
-            top: 0; bottom: 0; left: 8%; right: 8%;
+            top: 0; bottom: 0; left: 6%; right: 6%;
             overflow: hidden; 
         }
 
         .marquee-content {
             display: flex;
             flex-direction: column; 
-            gap: 45px;              
+            gap: 30px;              
             position: absolute;
             width: 100%;
-            animation: scrollUp 45s linear infinite; 
+            animation: scrollUp 40s linear infinite; 
         }
 
-        /* 留言便條：調整為更具手寫紙張感的樣式 */
+        /* 留言氣泡：採用現代化的圓角矩形 */
         .message-item {
-            font-size: 58px; /* 鋼筆字體稍大一點比較清晰 */
-            line-height: 1.3;
-            padding: 40px 60px;
-            /* 不對稱圓角，模擬手撕紙張或隨手貼的感覺 */
-            border-radius: 10px 60px 15px 50px; 
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.1);
+            font-size: 44px; 
+            font-weight: 700; /* 加粗讓正黑體更醒目 */
+            line-height: 1.5;
+            padding: 30px 45px;
+            border-radius: 20px; 
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
             word-wrap: break-word; 
             white-space: normal;
-            border-left: 12px solid #555; /* 左側鋼筆墨色邊條 */
-            color: #2c3e50; /* 深藍灰色，模仿高品質鋼筆墨水 */
-            transform: rotate(-0.5deg); /* 輕微傾斜增加真實感 */
+            color: #222;
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
 
-        /* 墨水色彩循環：使用較沉穩的手寫墨色 */
+        /* 顏色循環：使用高對比的清新配色 */
         .message-item:nth-child(4n+1) { 
-            border-left-color: #ffb7b2; /* 櫻花粉墨 */
-            background-color: #fff9f9;
+            background: linear-gradient(135deg, #ffffff 0%, #fff0f0 100%);
+            border-left: 10px solid #ff6b6b;
         }
         .message-item:nth-child(4n+2) { 
-            border-left-color: #a2d2ff; /* 晴空藍墨 */
-            background-color: #f7fbff;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+            border-left: 10px solid #4dadff;
         }
         .message-item:nth-child(4n+3) { 
-            border-left-color: #b9fbc0; /* 薄荷綠墨 */
-            background-color: #fafffb;
+            background: linear-gradient(135deg, #ffffff 0%, #f0fff4 100%);
+            border-left: 10px solid #51cf66;
         }
         .message-item:nth-child(4n) { 
-            border-left-color: #cfbaf0; /* 薰衣草紫墨 */
-            background-color: #fdfbff;
-        }
-
-        /* 偶數項輕微向右偏移並反向旋轉 */
-        .message-item:nth-child(even) {
-            align-self: flex-end;
-            transform: rotate(0.8deg);
-            max-width: 85%;
+            background: linear-gradient(135deg, #ffffff 0%, #fff9f0 100%);
+            border-left: 10px solid #fcc419;
         }
 
         @keyframes scrollUp {
             0% { transform: translateY(100vh); } 
-            100% { transform: translateY(-110%); } 
+            100% { transform: translateY(-105%); } 
         }
     </style>
 </head>
@@ -81,7 +73,7 @@
 
     <div class="marquee-container">
         <div class="marquee-content" id="displayBoard">
-            ✨ 正在用鋼筆書寫留言中...
+            💬 正在載入留言...
         </div>
     </div>
 
@@ -99,14 +91,13 @@
                         <div class="message-item">${msg}</div>
                     `).join('');
                 } else {
-                    displayBoard.innerHTML = '<div class="message-item">目前還沒有悄悄話... (˶‾᷄ ⁻̫ ‾᷅˵)</div>';
+                    displayBoard.innerHTML = '<div class="message-item">暫時沒有新留言喔！</div>';
                 }
             } catch (error) {
                 console.error("更新失敗:", error);
             }
         }
 
-        // 每 30 秒更新一次資料，避免過於頻繁重置動畫
         setInterval(updateMarquee, 30000);
         updateMarquee();
     </script>

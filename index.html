@@ -1,46 +1,45 @@
-<style>
-    body { 
-        background-color: transparent; 
-        color: #333; 
-        margin: 0;
-        padding: 0;
-        overflow: hidden; 
-        font-family: 'Zhi Mang Xing', cursive;
-    }
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鋼筆手寫風留言牆</title>
+    <link href="https://fonts.googleapis.com/css2?family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            background-color: transparent; 
+            margin: 0;
+            padding: 0;
+            overflow: hidden; 
+            /* 套用鋼筆手寫字型 */
+            font-family: 'Zhi Mang Xing', cursive, "微軟正黑體", sans-serif;
+        }
 
-    .marquee-container {
-        position: fixed;
-        top: 0; bottom: 0; left: 8%; right: 8%;
-        overflow: hidden; 
-    }
+        .marquee-container {
+            position: fixed;
+            top: 0; bottom: 0; left: 8%; right: 8%;
+            overflow: hidden; 
+        }
 
-    .marquee-content {
-        display: flex;
-        flex-direction: column; 
-        gap: 40px;              
-        position: absolute;
-        width: 100%;
-        animation: scrollUp 45s linear infinite; 
-    }
+        .marquee-content {
+            display: flex;
+            flex-direction: column; 
+            gap: 45px;              
+            position: absolute;
+            width: 100%;
+            animation: scrollUp 45s linear infinite; 
+        }
 
-    .message-item {
-        font-size: 60px;
-        padding: 40px 60px;
-        border-radius: 15px 50px 15px 50px; /* 不對稱圓角，更有手寫紙條感 */
-        background: rgba(255, 255, 255, 0.9); /* 半透明白色背景，讓鋼筆字更明顯 */
-        border: 2px solid #eee;
-        box-shadow: 5px 5px 15px rgba(0,0,0,0.05);
-        color: #2c3e50; /* 深灰藍色，像鋼筆墨水 */
-    }
-
-    /* 墨水色彩循環：讓背景變淡，強調手寫墨色 */
-    .message-item:nth-child(4n+1) { background: #fff5f5; border-left: 8px solid #ff9a9e; }
-    .message-item:nth-child(4n+2) { background: #f0f7ff; border-left: 8px solid #a1c4fd; }
-    .message-item:nth-child(4n+3) { background: #f2fff7; border-left: 8px solid #84fab0; }
-    .message-item:nth-child(4n)   { background: #fff9f0; border-left: 8px solid #fccb90; }
-
-    @keyframes scrollUp {
-        0% { transform: translateY(100vh); } 
-        100% { transform: translateY(-100%); } 
-    }
-</style>
+        /* 留言便條：調整為更具手寫紙張感的樣式 */
+        .message-item {
+            font-size: 58px; /* 鋼筆字體稍大一點比較清晰 */
+            line-height: 1.3;
+            padding: 40px 60px;
+            /* 不對稱圓角，模擬手撕紙張或隨手貼的感覺 */
+            border-radius: 10px 60px 15px 50px; 
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.1);
+            word-wrap: break-word; 
+            white-space: normal;
+            border-left: 12px solid #555; /* 左側鋼筆墨色邊條 */
+            color: #2c3e50; /* 深藍灰色，模仿高品質鋼筆墨水

@@ -42,4 +42,73 @@
             word-wrap: break-word; 
             white-space: normal;
             border-left: 12px solid #555; /* 左側鋼筆墨色邊條 */
-            color: #2c3e50; /* 深藍灰色，模仿高品質鋼筆墨水
+            color: #2c3e50; /* 深藍灰色，模仿高品質鋼筆墨水 */
+            transform: rotate(-0.5deg); /* 輕微傾斜增加真實感 */
+        }
+
+        /* 墨水色彩循環：使用較沉穩的手寫墨色 */
+        .message-item:nth-child(4n+1) { 
+            border-left-color: #ffb7b2; /* 櫻花粉墨 */
+            background-color: #fff9f9;
+        }
+        .message-item:nth-child(4n+2) { 
+            border-left-color: #a2d2ff; /* 晴空藍墨 */
+            background-color: #f7fbff;
+        }
+        .message-item:nth-child(4n+3) { 
+            border-left-color: #b9fbc0; /* 薄荷綠墨 */
+            background-color: #fafffb;
+        }
+        .message-item:nth-child(4n) { 
+            border-left-color: #cfbaf0; /* 薰衣草紫墨 */
+            background-color: #fdfbff;
+        }
+
+        /* 偶數項輕微向右偏移並反向旋轉 */
+        .message-item:nth-child(even) {
+            align-self: flex-end;
+            transform: rotate(0.8deg);
+            max-width: 85%;
+        }
+
+        @keyframes scrollUp {
+            0% { transform: translateY(100vh); } 
+            100% { transform: translateY(-110%); } 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="marquee-container">
+        <div class="marquee-content" id="displayBoard">
+            ✨ 正在用鋼筆書寫留言中...
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbwbplzkLckWDgruWxAt6RMNu5WBI2k36457bIxgk3iwyI8AGU5MI6qHMh6vb9Vs2nnS/exec";
+
+        async function updateMarquee() {
+            try {
+                const res = await fetch(API_URL + "?t=" + new Date().getTime());
+                const messages = await res.json();
+                const displayBoard = document.getElementById('displayBoard');
+                
+                if (messages && messages.length > 0) {
+                    displayBoard.innerHTML = messages.map(msg => `
+                        <div class="message-item">${msg}</div>
+                    `).join('');
+                } else {
+                    displayBoard.innerHTML = '<div class="message-item">目前還沒有悄悄話... (˶‾᷄ ⁻̫ ‾᷅˵)</div>';
+                }
+            } catch (error) {
+                console.error("更新失敗:", error);
+            }
+        }
+
+        // 每 30 秒更新一次資料，避免過於頻繁重置動畫
+        setInterval(updateMarquee, 30000);
+        updateMarquee();
+    </script>
+</body>
+</html>

@@ -1,32 +1,46 @@
-/* 留言氣泡：加入隨機感 */
-.message-item {
-    font-size: 48px;
-    font-weight: bold;
-    line-height: 1.4;
-    padding: 35px 50px;
-    border-radius: 50px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); /* 稍微加深陰影 */
-    word-wrap: break-word;
-    white-space: normal;
-    border: 4px solid transparent;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    
-    /* 讓氣泡有輕微的左右錯落感 */
-    max-width: 90%;
-    align-self: flex-start;
-}
+<style>
+    body { 
+        background-color: transparent; 
+        color: #333; 
+        margin: 0;
+        padding: 0;
+        overflow: hidden; 
+        font-family: 'Zhi Mang Xing', cursive;
+    }
 
-/* 偶數項向右對齊並微調角度 */
-.message-item:nth-child(even) {
-    align-self: flex-end;
-    transform: rotate(1deg);
-}
+    .marquee-container {
+        position: fixed;
+        top: 0; bottom: 0; left: 8%; right: 8%;
+        overflow: hidden; 
+    }
 
-.message-item:nth-child(odd) {
-    transform: rotate(-1deg);
-}
+    .marquee-content {
+        display: flex;
+        flex-direction: column; 
+        gap: 40px;              
+        position: absolute;
+        width: 100%;
+        animation: scrollUp 45s linear infinite; 
+    }
 
-@keyframes scrollUp {
-    0% { transform: translateY(100vh); }
-    100% { transform: translateY(-110%); } /* 確保完全滑出螢幕 */
-}
+    .message-item {
+        font-size: 60px;
+        padding: 40px 60px;
+        border-radius: 15px 50px 15px 50px; /* 不對稱圓角，更有手寫紙條感 */
+        background: rgba(255, 255, 255, 0.9); /* 半透明白色背景，讓鋼筆字更明顯 */
+        border: 2px solid #eee;
+        box-shadow: 5px 5px 15px rgba(0,0,0,0.05);
+        color: #2c3e50; /* 深灰藍色，像鋼筆墨水 */
+    }
+
+    /* 墨水色彩循環：讓背景變淡，強調手寫墨色 */
+    .message-item:nth-child(4n+1) { background: #fff5f5; border-left: 8px solid #ff9a9e; }
+    .message-item:nth-child(4n+2) { background: #f0f7ff; border-left: 8px solid #a1c4fd; }
+    .message-item:nth-child(4n+3) { background: #f2fff7; border-left: 8px solid #84fab0; }
+    .message-item:nth-child(4n)   { background: #fff9f0; border-left: 8px solid #fccb90; }
+
+    @keyframes scrollUp {
+        0% { transform: translateY(100vh); } 
+        100% { transform: translateY(-100%); } 
+    }
+</style>
